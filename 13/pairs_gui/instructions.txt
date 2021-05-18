@@ -1,0 +1,99 @@
+1. Introduction:
+	The program provides a GUI for the pairs game. The rule is simple: Open the cards until the board is cleared. If there is a pair, the cards will be collected by the player from the board.
+
+2. Instructions:
+	- Enter the number of players and number of cards. There are a few rules:
+		+ The input must be a number greater than 0
+		+ The number of card must be even
+		+ There is an upper limit to the number of cards: 52
+	- Enter the players' names.
+	- After the user have entered the necessary information for the game, the main window of the game will start. On the left of the window are the cards. You can click the cards to open it.
+	If the cards opened are a pair, the player in turn will be able to collect the cards from the board. Else, the card will become hidden again.
+	- The game starts with the first player. If any player gets a pair, he/she can continue playing. Else, the turn is switched to the next player. The player in turn will be indicated with
+	a red color in the players area. The other players will be indicated with yellow.
+	- The game ends when all the cards are cleared. The player with the most pairs wins.
+	- Press REPLAY to restart the game, LEADERBOARDS to view the games with the shortest times, or press CLOSE to quit.
+	- If you wish to only see the leaderboards, close the Game Information window and click Leaderboards. Simply press REPLAY to start creating the game again.
+
+3. Cautions:
+	- The GUI is NOT designed well for more than 6 people. It is playable, but the GUI cannot display more than 6 people properly. It is advisable to keep the number of players less than or equal
+	to 6.
+	- The program gives a warning: libpng warning: iCCP: known incorrect sRGB profile. I an unable to understand and tackle this, and it seems not affect the game, so I will leave it as it is. Please
+	give me more information on this warning in the feedback.
+
+4. The functions of the game:
+	The game has covered the required functions:
+		- The game can cope with at least 2 players
+		- The player in turn is indicated (with red color)
+		- The user can choose the number of cards (there is still an upper bound of 52)
+		- The cards are graphical user interface elements (push buttons)
+		- The number of rows and columns of cards are as close to each other as possible
+		- The cards can be turned by clicking them
+		- There are at most 2 cards visible at a time (This is achieved by disabling all the card buttons when 2 different cards are clicked)
+		- The front and back of the cards are different (back: green with pattern, front: blue with color)
+		- The front of the cards are visible by 1 second until it is closed again
+		- The result is automatically shown after the game with a dialog
+		- This is the documentation of the game
+
+	Additional functions:
+		- The game allows a variable number of players (recommended upper bound: 6). The number of players is asked from the user.
+		- The user can name the players
+		- Each person's card pile can grow graphically when a player collects a pair of cards
+		- The program call also tell which card the player has collected (by clicking on the button on the player area)
+		- The time used in the game is counted during the game and shown after the game (by the same principle as the Timer exercise in week 12)
+		- The game can be restarted without starting the program again (by the REPLAY button)
+		- The game can save the data of the previous games (file name: results.record) and shows the previous results (The Leaderboard dialog).
+		I have decided to show the top 5 games with the highest winner score, since no other choice seems to make sense. Please give me comments on this
+		in the feedback. The data includes the time of the game, the number of cards, the winner's name and the winner's point.
+		- There is a pattern figure at the back of every card.
+
+5. Detailed description of the implementation of the windows and dialogs of the game
+	a. The game starts with a StartWindow subwindow (QMdiSubWindow). This window features LineEdit widgets to get the number of players and cards from the user. There is also a TextBrowser widget
+	to display the error in the input (the rules are described above).
+	
+	b. After the number of players and cards are recorded, the PlayerNameWindow subwindow appears. This is the subwindow to the StartWindow. This window features the Labels and LineEdits for the
+	players' names. Because the number of players varies, the widget I used here is QFormLayout.
+
+	c. When the PlayerNameWindow is done, the StartWindow also closes. The game will start initialize on the MainWindow. In the MainWindow, there are 4 main areas
+		- The QGroupBox for the cards is on the left side of the window. It is the largest part of the window. The cards (which are push buttons) is arranged using the QGridLayout.
+		The MainWindow also has the function of the previous project to calculate the number of rows and columns for them to be as close as possible.
+		- Under the cards layout is the timer of the game. This is completely the same as the exercise Timer in week 12. The slots of the timer is also written in the MainWindow class.
+		- Next to the cards is the QGroupBox widget for the PlayerInformation QWidget widgets. This part stores the QWidget which represents as a player of the game. The players which are
+		not in turn has yellow background, the player in turn has the red background.
+		- Under the players area, there are 3 interactive buttons: CLOSE, REPLAY and LEADERBOARDS. The REPLAY button starts the game again, the CLOSE button closes the game, and the
+		LEADERBOARDS button shows the leaderboard.
+	
+	d. The MainWindow handles the most functionalities and stores mostly all information of the game in its attributes
+		- The MainWindow class stores (most importantly):
+			+ Number of players and cards
+			+ PlayerInformation objects
+			+ Card objects
+			+ Currently selected cards
+		- The MainWindow class handles
+			+ Create cards and assign them random letters
+			+ Create PlayerInformation objects
+			+ Manage the card selection: check whether the cards are pairs, prevent crash when the user clicks 1 card too many times and disable cards while the open cards are waiting to be closed.
+			+ Manage the turn of the players: Switch players when the selected cards are not pairs, add point if the selected cards are a pair.
+			+ Check if the game has finished & saving the results to the record file.
+
+	e. When the game is finished, the Result dialog (QDialog) will pop up. This will show the time elapsed, the winner's name, and the point. If more than 1 person have the same point, the winners are all of them.
+
+	f. The Leaderboard dialog (QDialog) shows the 5 winners with the highest points. I use the QTableWidget for the Leaderboard because that is the most suitable to show this kind of database.
+	The Leaderboard dialog will read the input file to retrieve data, as well as process the data to find the top 5 using a static comparison ID in the class.
+	
+	g. If the user clicks the button Cards in the player information area, the cards that player has collected will be shown as a dialog (PlayersCard - QDialog). The card is shown as push buttons inside a QGroupBox widgets.
+
+	Note: The StartWindow and PlayerNameWindow should be of type QDialog. Because I learned QDialog after I had implemented those classes, I don't want to change them because I'm afraid there will be a lot to fix in the code.
+
+6. Detailed description of other classes:
+	a. Card: This class represents a card in the game. The UI of this card includes a push button. The user can click the button to open the card. Closing the card is done by the program
+		- The card has 2 side: Green with pattern (online PNG) on the back, letter and blue on the front.
+		- The card also has an enum type to indicate the state of the card (The same as the first project)
+		- When 2 cards are opened, the other cards will be disabled by setEnabled(false)
+	b. PlayerInformation: This card represents a player in the game. The UI of this card includes labels to display the name and points, and a push button to show the collected cards
+		- This class has the obvious attributes: player's name, point and collected cards
+		- The most important methods of the class are adding a point and collect a card (technically these can be combined into 1, but the latter is implemented much later than the former.
+		- The class also creates the PlayersCard dialog.
+
+PNG attribute: pattern clipart PNG Designed By sagarvaghani from <a href="https://pngtree.com">Pngtree.com</a>
+

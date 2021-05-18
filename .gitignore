@@ -9,5 +9,3 @@ build*
 *moc_*.cpp
 *moc_*.h
 *.h
-*/find_dialog
-*/pairs_gui
