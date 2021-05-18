@@ -1,0 +1,14 @@
+*.pro.user
+build*
+*.txt
+*.input
+.DS_Store
+*.pro.user.*
+*.o
+*Makefile
+.qmake.stash
+*moc_*.cpp
+*moc_*.h
+*.h
+*/find_dialog
+*/pairs_gui

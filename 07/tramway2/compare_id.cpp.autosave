@@ -1,0 +1,10 @@
+#include <iostream>
+#include <string>
+#incl
+
+
+
+// Compare the distance of the 2 stops
+bool compare_distance(std::pair<std::string, double> &stop_1, std::pair<std::string, double> &stop_2) {
+    return (stop_1.second < stop_2.second);
+}
