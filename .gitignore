@@ -1,6 +1,5 @@
 *.pro.user
 build*
-*.txt
 *.input
 .DS_Store
 *.pro.user.*
